@@ -18,27 +18,13 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: 3. 安装 Flutter 安卓打包引擎
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.27.4'
-          channel: 'stable'
-
-      - name: 4. 安装 Java 环境
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: 5. 开始打包成安卓 APK
+      - name: 3. 用最新 Flet 1.0 一键打包安卓 APK
         run: |
-          sed -i 's/ft.Button(/ft.ElevatedButton(/g' main.py
-          sed -i 's/content=/text=/g' main.py
-          sed -i 's/ft.run(/ft.app(/g' main.py
-          pip install "flet[all]==0.27.6" "packaging<25.0"
+          echo "flet" > requirements.txt
+          pip install "flet[all]"
           flet build apk -v
 
-      - name: 6. 把做好的 APK 放进下载区
+      - name: 4. 把做好的 APK 放进下载区
         uses: actions/upload-artifact@v4
         with:
           name: supermarket-apk
