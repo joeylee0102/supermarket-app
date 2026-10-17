@@ -4,6 +4,12 @@ import json
 import os
 def main(page:ft.Page):
     page.title="超市比价小助手"
+    page.padding = 20
+    page.appbar = ft.AppBar(
+        title=ft.Text("🛒 抠门大法宝典", color="white", weight="bold"),
+        bgcolor="green",
+        center_title=True
+    )
     page.scroll = ft.ScrollMode.AUTO
 
     storage_dir = os.getenv("FLET_APP_STORAGE_DATA", ".")
@@ -17,15 +23,15 @@ def main(page:ft.Page):
     else:
         price_data={}
         
-    item_input=ft.TextField(label="商品名称")
+    item_input=ft.TextField(label="📦 商品名称",border_radius=10)
     store_select=ft.Dropdown(
-        label="选择超市",
+        label="🏪选择超市",border_radius=10,
         options=[
             ft.dropdown.Option("99 Speedmart"),
             ft.dropdown.Option("C-Mart")
         ]
     )
-    price_input=ft.TextField(label="价格")
+    price_input=ft.TextField(label="💰 价格 (RM)", keyboard_type=ft.KeyboardType.NUMBER, border_radius=10)
 
     status_text=ft.Text()
 
@@ -62,14 +68,23 @@ def main(page:ft.Page):
                 advice="💡 还差一家超市的价格，下次去逛记得补上哦！"
 
             result_list.controls.append(
-                ft.Row([
-                ft.Text(f"🛒[{item_name}]\n 99:{text_99} | C-Mart:{text_cmart}\n 👉{advice}\n"),
-                ft.Button(
-                    content="🗑️ 删除",
-                    on_click=lambda e, name=item_name:delete_item(name)
+                ft.Card(
+                    content=ft.Container(
+                        padding=12,
+                        content=ft.Row([
+                            ft.Text(
+                                f"🛒 【{item_name}】\n🏪 99: {text_99}\n🏬 C-Mart: {text_cmart}\n{advice}",
+                                expand=True  # ✨ 让文字占满左边，自动换行不挤出屏幕！
+                            ),
+                            ft.Button(
+                                content="🗑️",
+                                on_click=lambda e, name=item_name: delete_item(name)
+                            )
+                        ])
+                    )
                 )
-                ])
-                )
+            )
+
             
         page.update()
 
@@ -95,6 +110,20 @@ def main(page:ft.Page):
         
     save_btn=ft.Button(content="保存价格",on_click=save_click)
 
-    page.add(item_input,store_select,price_input,save_btn,status_text,search_input,result_list)
+    page.add(
+        ft.SafeArea(
+            ft.Column([
+                item_input,
+                store_select,
+                price_input,
+                save_btn,
+                status_text,
+                ft.Divider(),
+                search_input,
+                result_list
+            ])
+        )
+    )
+
     show_comparison()
 ft.run(main)
