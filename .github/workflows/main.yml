@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "flet" > requirements.txt
           pip install "flet[all]"
-          flet build apk -v
+          yes | flet build apk --yes -v
 
       - name: 4. 把做好的 APK 放进下载区
         uses: actions/upload-artifact@v4
