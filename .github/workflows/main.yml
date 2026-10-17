@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 拿出你的代码
+        uses: actions/checkout@v4
+
+      - name: 2. 安装 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 3. 安装 Flutter 安卓打包引擎
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: 4. 安装 Java 环境
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 5. 开始打包成安卓 APK
+        run: |
+          pip install "flet[all]==0.27.6"
+          flet build apk --yes
+
+      - name: 6. 把做好的 APK 放进下载区
+        uses: actions/upload-artifact@v4
+        with:
+          name: supermarket-apk
+          path: build/apk/*.apk
