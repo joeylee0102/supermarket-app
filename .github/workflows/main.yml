@@ -21,6 +21,7 @@ jobs:
       - name: 3. 安装 Flutter 安卓打包引擎
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.27.4'
           channel: 'stable'
 
       - name: 4. 安装 Java 环境
@@ -31,8 +32,11 @@ jobs:
 
       - name: 5. 开始打包成安卓 APK
         run: |
-          pip install "flet[all]==0.27.6"
-          flet build apk --yes
+          sed -i 's/ft.Button(/ft.ElevatedButton(/g' main.py
+          sed -i 's/content=/text=/g' main.py
+          sed -i 's/ft.run(/ft.app(/g' main.py
+          pip install "flet[all]==0.27.6" "packaging<25.0"
+          flet build apk -v
 
       - name: 6. 把做好的 APK 放进下载区
         uses: actions/upload-artifact@v4
